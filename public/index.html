@@ -1,0 +1,102 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="/" />
+
+    <title>Scheduler App</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/style.css"> <!-- custom styles -->
+
+    <!-- JS -->
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/angular-route/angular-route.min.js"></script>
+
+    <!-- ANGULAR CUSTOM -->
+    <script src="js/services/authentication.js"></script>
+    <script src="js/controllers/taskControllers.js"></script>
+    <script src="js/angularApp.js"></script>
+</head>
+
+    <body ng-app = "schedulerApp" ng-controller = "taskController">
+    {{isLoggedIn}}
+<br>
+<br>
+
+<input type = "submit" value = "hide login" ng-click="hideLogin()">
+<div ng-hide="loginHide">
+Register
+        <form>
+            Userame:<input type = "text" ng-model = "username">
+            Email:<input type = "text" ng-model = "email">
+            Password:<input type = "text" ng-model = "password">
+            <input type = "submit" value = "register" ng-click="registerUser()">
+        </form>
+<br>
+<br>
+login
+        <form>
+            Email:<input type = "text" ng-model = "email">
+            Password:<input type = "text" ng-model = "password">
+            <input type = "submit" value = "login" ng-click="login()">
+        </form>
+<br>
+<br>
+logout
+        <form>
+            <input type = "submit" value = "logout" ng-click="logout()">
+        </form>
+        <br>
+        <br>
+update password
+        <form>
+            Email:<input type = "text" ng-model = "email">
+            Password:<input type = "text" ng-model = "password">
+            New Password:<input type = "text" ng-model = "newPassword">
+            <input type = "submit" value = "change" ng-click="changePassword()">
+        </form>
+</div>
+<br>
+<br>
+<br>
+USERS
+        <div ng-repeat = "user in selfUserList">
+            {{user}}
+        </div>
+        <input type = "submit" value = "get users" ng-click="loadUserList()">
+
+        <form>
+            Name:<input type = "text" ng-model = "newMember">
+            Type:<input type = "text" ng-model = "newUserType">
+            <input type = "submit" value = "add Team Member" ng-click="addTeamMember()">
+        </form>
+
+<br><BR><BR>
+
+TASKS
+
+        <div ng-repeat = "tasks in taskList">
+            {{tasks.taskName}}
+            <input type = "submit" value = "{{tasks.taskName}}" ng-click = "getTaskLists()">
+
+        </div>
+        <input type = "submit" value = "getTasks" ng-model="getTaskList" ng-click="getTaskList()">
+        <form>
+            Name:<input type = "text" ng-model = "newTask">
+            Deadline:<input type = "text" ng-model = "taskDeadline">
+            <input type = "submit" value = "new task" ng-click="addNewTask()">
+        </form>
+        <br>
+Remove Tasks
+        <form>
+            ID:<input type = "text" ng-model = "removedID">
+            <input type = "submit" value = "new task" ng-click="removeTask()">
+        </form>
+
+        
+    </body>
+
+</html>
