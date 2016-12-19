@@ -12,7 +12,7 @@ var userSchema = mongoose.model('user');
 var authFunctions = require('./controllers/authentication');
 var teamFunctions = require('./models/teamShell');
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://admin:admin@ds139288.mlab.com:39288/heroku_lxwxcz7d');
 
 module.exports = function(app){
 
