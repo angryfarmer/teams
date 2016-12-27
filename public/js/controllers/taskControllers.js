@@ -18,7 +18,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	$scope.logoutHide = true;
 	$scope.registerHide = true;
 	$scope.passwordChangeHide = true;
-	$scope.userModuleHide = false;
+	$scope.userModuleHide = true;
 
 	$scope.newTask='';
 	$scope.taskDeadline=0;
