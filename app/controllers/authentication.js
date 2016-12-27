@@ -38,7 +38,7 @@ module.exports.register = function(req,res,next){
 module.exports.login = function(req,res){
 	passport.authenticate('local',function(err,user,info){
 		var token;
-
+		
 		if(err){
 			res.status(404).json(err);
 			return;

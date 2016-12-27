@@ -1,0 +1,13 @@
+<div class = "task">
+something 
+	<div style="float:left;">
+		{{task.taskName}}
+		<div>
+			{{task.assignedUser}} | Status: {{task.completed}}
+		</div>
+	</div>	
+	<div >
+		<input type = "submit" value = "assign" ng-click = "assignUsers(teamName,task._id)">
+		<input type = "submit" value = "completed" ng-click = "completeTask(teamName,task._id)">
+	</div>
+</div>

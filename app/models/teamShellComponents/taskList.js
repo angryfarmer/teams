@@ -88,7 +88,7 @@ module.exports.completeTask = function(teamName,objectID,res){
 			res.send('success');
 		}
 	});
-}
+};
 
 module.exports.newTaskList = function(teamName){
 	return mongoose.model(teamName+'taskList',taskListSchema);

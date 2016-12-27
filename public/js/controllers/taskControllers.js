@@ -1,4 +1,4 @@
-angular.module('mainControl',['authControl']).controller('taskController',function($scope,$http,authentication){
+angular.module('mainControl',['authControl','taskControl','profileControl','teamAdminControl']).controller('taskController',function($scope,$http,authentication,taskFunctions,profileFunctions,teamAdminFunctions){
 	$scope.title = 'Task List';
 	$scope.tasks = [];
 	$scope.currentName;
@@ -8,19 +8,25 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 	$scope.email = '';
 	$scope.password = '';
 	$scope.newPassword = '';
-	$scope.isLoggedIn  = "N/A"
+	$scope.loggedUser  = "N/A"
 
 	$scope.currentTeam = "_self_";
 
-	$scope.selfUserList = [];
+	$scope.userList = [];
 
-	$scope.loginHide = false;
+	$scope.loginHide = true;
+	$scope.logoutHide = true;
+	$scope.registerHide = true;
+	$scope.passwordChangeHide = true;
+	$scope.userModuleHide = false;
 
 	$scope.newTask='';
 	$scope.taskDeadline=0;
 	$scope.taskList = [];
 
 	$scope.removedID = '';
+
+	$scope.myTeams = []
 
 	var test;
 
@@ -30,7 +36,52 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 
 	$scope.hideLogin = function(){
 		$scope.loginHide = !$scope.loginHide;
+		if(!$scope.loginHide){
+			$scope.registerHide = true;
+		}
 	}
+
+	$scope.hidePasswordChange = function(){
+		$scope.passwordChangeHide = !$scope.passwordChangeHide;
+	}
+
+	$scope.hideRegister = function(){
+		$scope.registerHide = !$scope.registerHide;
+		if(!$scope.registerHide){
+			$scope.loginHide = true;
+		}
+	}
+
+	var toggleUserModule = function(){
+		$scope.userModuleHide = !$scope.userModuleHide
+	}
+
+	var loadUser = function(){
+			$scope.loggedUser = auth.loggedUser();
+			$scope.showTeam($scope.loggedUser + "_self_");
+			console.log($scope.currentTeam);
+			toggleUserModule();
+			console.log('profile');
+			profileFunctions.getMyTeams().then(function(response){
+				console.log($scope.myTeams);
+				$scope.myTeams = response.data;
+			})
+	}
+
+
+	var unloadUser = function(){
+			$scope.loggedUser = '';
+			$scope.currentTeam = '';
+			$scope.myTeams = [];
+			$scope.taskList = [];
+			$scope.userList = [];
+			profileFunctions.getMyTeams().then(function(response){
+				console.log($scope.myTeams);
+				$scope.myTeams = response.data;
+			})
+	}
+
+
 
 	$scope.registerUser = function(){
 		var user = {};
@@ -38,16 +89,12 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		user.email = $scope.email;
 		user.password = $scope.password;
 		auth.register(user).then(function(){
-			$scope.isLoggedIn = auth.loggedUser();
-			$scope.currentTeam = $scope.isLoggedIn + $scope.currentTeam;
-			console.log($scope.currentTeam);
-			$scope.loadUserList();
+			loadUser();
 		});
 		$scope.username = '';
 		$scope.email = '';
 		$scope.password = '';
 		$scope.newPassword = '';
-
 	};
 
 	$scope.login = function(){
@@ -55,21 +102,18 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		user.email = $scope.email;
 		user.password = $scope.password;
 		auth.login(user).then(function(){
-			$scope.isLoggedIn = auth.loggedUser();
-			$scope.currentTeam = $scope.isLoggedIn + $scope.currentTeam;
-			console.log($scope.currentTeam);
+			loadUser();
 		});
 		$scope.username = '';
 		$scope.email = '';
 		$scope.password = '';
 		$scope.newPassword = '';
-		
-		
 	};
 
 	$scope.logout = function(){
 		auth.logout();
-		$scope.isLoggedIn = auth.loggedUser();
+		$scope.loggedUser = auth.loggedUser();
+		toggleUserModule();
 	}
 
 	$scope.changePassword = function(){
@@ -82,47 +126,55 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		$scope.email = '';
 		$scope.password = '';
 		$scope.newPassword = '';
-		auth.logout();
-		$scope.isLoggedIn = auth.loggedUser();
-		
 	};
 	
-	$scope.loadUserList = function(){
-		console.log('loaduserlist');
-		$http.post('/getUserList',{requestor:$scope.isLoggedIn,teamName:($scope.isLoggedIn+'_self_')}).then(function(response){
+
+
+	$scope.loadUserList = function(teamName){
+		console.log('loaduserlist ' + teamName);
+		teamAdminFunctions.loadUserList(teamName).then(function(response){
 			console.log('loading user List');
-			$scope.selfUserList = response.data;
+			$scope.userList = response.data;
 		}, function(){
 			console.log('not loading user List');	
 		});	
 	};
 
-	$scope.newMember = 'tim'
+	$scope.newMember = ''
 	$scope.newUserType = 0;
+	$scope.newTeamName = '';
 
-	$scope.addTeamMember = function(){
-		console.log('loaduserlist');
-		$http.post('/addTeamMember',{newUser:$scope.newMember,
-			newUserType:$scope.newUserType,
-			requestor:$scope.isLoggedIn,
-			teamName:($scope.isLoggedIn+'_self_')
-		}).then(function(response){
+	$scope.createTeam = function(){
+
+		if($scope.newTeamName != ''){
+
+			teamAdminFunctions.createTeam($scope.newTeamName).then(function(response){
+				console.log(response);
+				if(response.data != ''){
+					$scope.myTeams.push(response.data);	
+					profileFunctions.getMyTeams();
+					$scope.newTeamName = '';
+				}
+				
+			});
+
+		}
+	}
+
+	$scope.addTeamMember = function(teamName){
+		console.log('add ' + $scope.newMember + ' to: ' + teamName);
+		teamAdminFunctions.addTeamMember($scope.newMember,$scope.newUserType,teamName).then(function(response){
 			console.log('adding username');
-			$scope.loadUserList();
+			console.log(response);
+			$scope.loadUserList(teamName);
 		}, function(){
 			console.log('couldnt add');	
 		});	
 	};
 	
 //currently trying to work on adding new task. Routes shoudl be ready. Just need to setup UI to test.
-	$scope.addNewTask = function(){
-		$http.post('/addNewTask',{
-			requestor:$scope.isLoggedIn,
-			teamName:$scope.currentTeam,
-			email:$scope.isLoggedIn,
-			taskName: $scope.newTask,
-			deadline: $scope.taskDeadline
-		}).then(function(response){
+	$scope.addNewTask = function(teamName){
+		taskFunctions.addNewTask(teamName,$scope.loggedUser,$scope.newTask,$scope.taskDeadline).then(function(response){
 			$scope.taskList.push(response.data);
 		},function(){
 			console.log('failed to add task');
@@ -131,12 +183,8 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		$scope.taskDeadline = 0;
 	};
 
-	$scope.removeTask = function(){
-		$http.post('/removeTask',{
-			requestor:$scope.isLoggedIn,
-			teamName:$scope.currentTeam,
-			objectID:$scope.removedID
-		}).then(function(response){
+	$scope.removeTask = function(teamName){
+		taskFunctions.removeTask(teamName,$scope.loggedUser,$scope.removedID).then(function(response){
 			$scope.getTaskList();
 		},function(){
 			console.log('failed to remove');
@@ -144,12 +192,17 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		$scope.removedID = '';
 	};
 
-	$scope.getTaskList = function(){
-		console.log('getTaskList');
-		$http.post('/getTaskList',{
-			teamName:$scope.currentTeam,
-			requestor:$scope.isLoggedIn
-		}).then(function(response){
+	$scope.completeTask = function(teamName,id){
+		taskFunctions.completeTask(teamName,$scope.loggedUser,id).then(function(response){
+			console.log(response);
+			$scope.getTaskList();
+		},function(){
+			console.log('failed to remove');
+		});
+	};
+
+	$scope.getTaskList = function(teamName){
+		taskFunctions.getTaskList(teamName,$scope.loggedUser).then(function(response){
 			console.log('success');
 			$scope.taskList = response.data;
 			console.log($scope.taskList);
@@ -159,28 +212,21 @@ angular.module('mainControl',['authControl']).controller('taskController',functi
 		})
 	};
 
-	$http.get('/alltestcase',{headers:{authorization: 'Bearer' + auth.getToken()}}).then(function(response){
-										$scope.tasks = response.data;
-										
-									}, function(response){
-										console.log("res"+response);
-									});
 
-	// $scope.addNewTask = function(){
-	// 	$http.post('/newTask',{
-	// 		name:$scope.currentName,
-	// 		age:$scope.currentAge
-	// 	},{headers:{Authorization: 'Bearer ' + auth.getToken()}
-	// 	}).then(function(response){
-	// 				$scope.tasks.push(response.data);
-	// 			},function(response){
-	// 				console.log(response);
-	// 			});
-	// 	$scope.currentAge = '';
-	// 	$scope.currentName = '';
-	// }
+	$scope.loggedUser = auth.loggedUser();
 
-	$scope.isLoggedIn = auth.loggedUser();
+	$scope.showTeam = function(teamName){
+		$scope.currentTeam = teamName;
+		$scope.taskList = [];
+		$scope.userList = [];
+		$scope.loadUserList(teamName);
+		$scope.getTaskList(teamName);
+	}
 	
+	if(auth.isLoggedIn()){
+		toggleUserModule();
+		loadUser();
+	}
+
 });
 

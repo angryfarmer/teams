@@ -1,1 +1,1 @@
-angular.module('schedulerApp',['mainControl']);
+angular.module('schedulerApp',['mainControl','directives','taskControl','profileControl','teamAdminControl']);

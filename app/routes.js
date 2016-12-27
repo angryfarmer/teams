@@ -28,12 +28,16 @@ module.exports = function(app){
 
 	//app.post()
 
-	app.post('/getUserList',teamFunctions.allow2,teamFunctions.getUserList);
-	app.post('/addTeamMember',teamFunctions.allow0,teamFunctions.addUserToTeam);
+	app.post('/api/getMyTeams',teamFunctions.getMyTeams);
+	app.post('/api/createTeam',teamFunctions.createTeam);
 
-	app.post('/getTaskList',teamFunctions.allow2,teamFunctions.getTaskList);
-	app.post('/addNewTask',teamFunctions.allow2,teamFunctions.addNewTask);
-	app.post('/removeTask',teamFunctions.allow2,teamFunctions.removeTask);
+	app.post('/api/getUserList',teamFunctions.allow2,teamFunctions.getUserList);
+	app.post('/api/addTeamMember',teamFunctions.allow0,teamFunctions.addUserToTeam);
+
+	app.post('/api/getTaskList',teamFunctions.allow2,teamFunctions.getTaskList);
+	app.post('/api/addNewTask',teamFunctions.allow2,teamFunctions.addNewTask);
+	app.post('/api/removeTask',teamFunctions.allow2,teamFunctions.removeTask);
+	app.post('/api/completeTask',teamFunctions.allow2,teamFunctions.completeTask);
 
 	app.post('/newTask', authFunctions.authenticate, function(req,res,next){
 		

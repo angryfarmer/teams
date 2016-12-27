@@ -6,15 +6,16 @@ userListSchema = new mongoose.Schema({
 	type:{type:Number,"default": 0}
 });
 
-module.exports.addTeamMember = function(newUser,newUserType,requestor,teamName){
+module.exports.addTeamMember = function(newUser,newUserType,requestor,teamName,res){
 	
 	var userSchema = mongoose.model('user');
-	userSchema.update({email:newUser},{$push: {
+	userSchema.update({email:newUser},{$addToSet: {
 			teams: teamName
 		}
 	},function(err,count,status){
 		console.log('updating')
 		if(err){
+			res.send(err);
 			console.log(err)
 		} else {
 			if(count.n > 0){
@@ -25,10 +26,14 @@ module.exports.addTeamMember = function(newUser,newUserType,requestor,teamName){
 				teamMember.save(function(err){
 					if(err){
 						console.log(err);
+						res.send(err)
 					} else {
+						res.send(newUser + " added to " + teamName);
 						console.log(newUser + " added to " + teamName);
 					}
 				});	
+			} else {
+				res.send('no match');
 			}
 		}	
 	});
@@ -49,20 +54,26 @@ module.exports.getUserList = function(teamName,callback){
 	});
 };
 
-module.exports.allowAction = function(requestor,teamName,requiredLevel,next){
+module.exports.allowAction = function(requestor,teamName,requiredLevel,next,res){
 	var userList = mongoose.model(teamName+'userList',userListSchema);
-
+	console.log('teamName:' + teamName);
 	userList.findOne({email:requestor},function(err,user){
 		if(err){
+			res.send(err);
 			console.log('err');
 		}
 		if(!user){
-			console.log('not allowed');
+			console.log('no user in team');
+			res.send('user cant be found');
 		} else {
 			if(user.type <= requiredLevel){
 				console.log(user.email + ' allowed');
 				next();
+			} else {
+				console.log('insufficient permissions')
+				res.send('insufficient permissions');
 			}
+
 		}
 
 	});
