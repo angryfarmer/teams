@@ -83,7 +83,7 @@
                     <div ng-repeat = "user in userList">
                         {{user}}
                     </div>
-                    <input type = "submit" value = "get users" ng-click="loadUserList(teamName)">
+                    <input type = "submit" value = "get users" ng-click="$parent.loadUserList(teamName)">
 
                     <form>
                         Name:<input type = "text" ng-model = "$parent.newMember">
@@ -99,17 +99,17 @@
                     <task></task>
                 </div>
 
-                <input type = "submit" value = "getTasks" ng-model="getTaskList" ng-click="getTaskList(teamName)">
+                <input type = "submit" value = "getTasks" ng-model="$parent.getTaskList" ng-click="$parent.getTaskList(teamName)">
                 <form>
-                    Name:<input type = "text" ng-model = "newTask">
+                    Name:<input type = "text" ng-model = "$parent.newTask">
                     Deadline:<input type = "text" ng-model = "taskDeadline">
-                    <input type = "submit" value = "new task" ng-click="addNewTask(teamName)">
+                    <input type = "submit" value = "new task" ng-click="$parent.addNewTask(teamName)">
                 </form>
                 <br>
                 Remove Tasks
                 <form>
-                    ID:<input type = "text" ng-model = "removedID">
-                    <input type = "submit" value = "new task" ng-click="removeTask(teamName)">
+                    ID:<input type = "text" ng-model = "$parent.removedID">
+                    <input type = "submit" value = "new task" ng-click="$parent.removeTask(teamName)">
                 </form>
             </div>
         </div>

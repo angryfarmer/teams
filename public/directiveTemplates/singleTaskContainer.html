@@ -7,7 +7,7 @@ something
 		</div>
 	</div>	
 	<div >
-		<input type = "submit" value = "assign" ng-click = "assignUsers(teamName,task._id)">
-		<input type = "submit" value = "completed" ng-click = "completeTask(teamName,task._id)">
+		<input type = "submit" value = "assign" ng-click = "$parent.assignUsers(teamName,task._id)">
+		<input type = "submit" value = "completed" ng-click = "$parent.completeTask(teamName,task._id)">
 	</div>
 </div>

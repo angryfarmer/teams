@@ -59,11 +59,8 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	var loadUser = function(){
 			$scope.loggedUser = auth.loggedUser();
 			$scope.showTeam($scope.loggedUser + "_self_");
-			console.log($scope.currentTeam);
 			toggleUserModule();
-			console.log('profile');
 			profileFunctions.getMyTeams().then(function(response){
-				console.log($scope.myTeams);
 				$scope.myTeams = response.data;
 			})
 	}
@@ -195,7 +192,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	$scope.completeTask = function(teamName,id){
 		taskFunctions.completeTask(teamName,$scope.loggedUser,id).then(function(response){
 			console.log(response);
-			$scope.getTaskList();
+			$scope.getTaskList($scope.currentTeam);
 		},function(){
 			console.log('failed to remove');
 		});
@@ -224,7 +221,6 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	}
 	
 	if(auth.isLoggedIn()){
-		toggleUserModule();
 		loadUser();
 	}
 

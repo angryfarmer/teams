@@ -77,6 +77,32 @@ module.exports.removeTask = function(teamName,objectID,res){
 	});
 };
 
+module.exports.removeTask = function(teamName,objectID,res){
+	var taskList = mongoose.model(teamName + 'taskList',taskListSchema);
+	taskList.remove({_id:objectID},function(err,count){
+		if(err){
+			console.log(err);
+			res.send(err);
+		} else {
+			console.log(count.result);
+			res.send('success');
+		}
+	});
+};
+
+module.exports.assignTask = function(teamName,objectID,assignedUsers,res){
+	var taskList = mongoose.model(teamName + 'taskList',taskListSchema);
+	taskList.update({_id:objectID},{$addToSet: {assignedUser: { $each: assignedUsers }}},function(err,count){
+		if(err){
+			console.log(err);
+			res.send(err);
+		} else {
+			console.log(count.result);
+			res.send('success');
+		}
+	});
+};
+
 module.exports.completeTask = function(teamName,objectID,res){
 	var taskList = mongoose.model(teamName + 'taskList',taskListSchema);
 	taskList.update({_id:objectID},{$set: {completed:true}},function(err,count){
