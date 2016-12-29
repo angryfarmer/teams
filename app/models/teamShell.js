@@ -143,6 +143,13 @@ module.exports.removeTask = function(req,res,next){
 	taskList.removeTask(teamName,objectID,res);
 };
 
+module.exports.assignUser = function(req,res,next){
+	teamName = req.body.teamName;
+	assignedUser = req.body.assignedUser;
+	objectID = req.body.objectID;
+	taskList.assignUser(teamName,objectID,assignedUser,res);
+};
+
 module.exports.completeTask = function(req,res,next){
 	teamName = req.body.teamName;
 	objectID = req.body.objectID;

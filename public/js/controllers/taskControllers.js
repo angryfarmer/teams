@@ -171,7 +171,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	
 //currently trying to work on adding new task. Routes shoudl be ready. Just need to setup UI to test.
 	$scope.addNewTask = function(teamName){
-		taskFunctions.addNewTask(teamName,$scope.loggedUser,$scope.newTask,$scope.taskDeadline).then(function(response){
+		taskFunctions.addNewTask(teamName,$scope.newTask,$scope.taskDeadline).then(function(response){
 			$scope.taskList.push(response.data);
 		},function(){
 			console.log('failed to add task');
@@ -181,7 +181,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	};
 
 	$scope.removeTask = function(teamName){
-		taskFunctions.removeTask(teamName,$scope.loggedUser,$scope.removedID).then(function(response){
+		taskFunctions.removeTask(teamName,$scope.removedID).then(function(response){
 			$scope.getTaskList();
 		},function(){
 			console.log('failed to remove');
@@ -190,7 +190,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	};
 
 	$scope.completeTask = function(teamName,id){
-		taskFunctions.completeTask(teamName,$scope.loggedUser,id).then(function(response){
+		taskFunctions.completeTask(teamName,id).then(function(response){
 			console.log(response);
 			$scope.getTaskList($scope.currentTeam);
 		},function(){
@@ -199,7 +199,7 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 	};
 
 	$scope.getTaskList = function(teamName){
-		taskFunctions.getTaskList(teamName,$scope.loggedUser).then(function(response){
+		taskFunctions.getTaskList(teamName).then(function(response){
 			console.log('success');
 			$scope.taskList = response.data;
 			console.log($scope.taskList);
@@ -209,6 +209,13 @@ angular.module('mainControl',['authControl','taskControl','profileControl','team
 		})
 	};
 
+	$scope.assignUser = function(teamName,objectID,newAssignedUser){
+		taskFunctions.assignUser(teamName,newAssignedUser,objectID).then(function(response){
+			$scope.getTaskList($scope.currentTeam);
+		},function(response){
+			console.log('failed to add observer');
+		});
+	}
 
 	$scope.loggedUser = auth.loggedUser();
 

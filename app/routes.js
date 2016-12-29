@@ -38,6 +38,7 @@ module.exports = function(app){
 	app.post('/api/addNewTask',teamFunctions.allow2,teamFunctions.addNewTask);
 	app.post('/api/removeTask',teamFunctions.allow2,teamFunctions.removeTask);
 	app.post('/api/completeTask',teamFunctions.allow2,teamFunctions.completeTask);
+	app.post('/api/assignUser',teamFunctions.allow1,teamFunctions.assignUser);
 
 	app.post('/newTask', authFunctions.authenticate, function(req,res,next){
 		
